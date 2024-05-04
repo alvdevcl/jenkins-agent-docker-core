@@ -19,10 +19,10 @@ jobs:
         uses: Dwolla/jenkins-agents-workflow/.github/actions/build@main
         with:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
           BASE_TAG: ${{ matrix.REMOTING_TAG }}
           TAG_NAME: JENKINS_REMOTING_TAG
-          IMAGE_NAME: dwolla/jenkins-agent-core
+          IMAGE_NAME: devcloudplatform/jenkins-agent-core
   build-complete:
     needs: build
     runs-on: ubuntu-latest
