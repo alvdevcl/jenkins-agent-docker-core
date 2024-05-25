@@ -1,4 +1,4 @@
-ARG JENKINS_REMOTING_TAG
+ARG JENKINS_REMOTING_TAG=latest
 
 FROM jenkins/inbound-agent:$JENKINS_REMOTING_TAG
 LABEL maintainer="Dwolla Dev <dev+jenkins-agent-core@dwolla.com>"
