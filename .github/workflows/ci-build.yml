@@ -19,7 +19,11 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker:
+  build:
+    strategy:
+      matrix:
+        remoting_tag:
+          - 4.13.2-1-jdk11
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,7 +34,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -48,7 +51,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=semver,pattern={{version}},enable=true,priority=900,value=v1.0.0
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -73,3 +75,9 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  build-complete:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The build completed successfully"
