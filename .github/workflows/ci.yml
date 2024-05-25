@@ -57,7 +57,7 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
           BASE_TAG: ${{ matrix.REMOTING_TAG }}
-          TAG_NAME: JENKINS_REMOTING_TAG
+          TAG_NAME: ${{ steps.meta.outputs.tags }}
           IMAGE_NAME: devcloudplatform/jenkins-agent-core
   build-complete:
     needs: build
