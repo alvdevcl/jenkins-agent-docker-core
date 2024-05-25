@@ -68,13 +68,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v5
+      - name: Build and Push Docker Image
+        uses: Dwolla/jenkins-agents-workflow/.github/actions/build@main
         with:
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
+          BASE_TAG: ${{ matrix.REMOTING_TAG }}
+          TAG_NAME: ${{ steps.meta.outputs.tags }}
+          IMAGE_NAME: devcloudplatform/jenkins-agent-core
+          
 
   build-complete:
     needs: build
