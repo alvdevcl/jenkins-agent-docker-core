@@ -11,9 +11,11 @@ WORKDIR ${JENKINS_HOME}
 
 USER root
 
-RUN set -ex && \
-    apt-get update && \
-    apt-get install -y \
+# Update package list
+RUN set -ex && apt-get update
+
+# Install necessary packages
+RUN apt-get install -y \
         apt-transport-https \
         bash \
         bc \
@@ -28,24 +30,27 @@ RUN set -ex && \
         python3-pip \
         python3-venv \
         shellcheck \
-        zip \
-        && \
-    pip3 install --upgrade \
-        awscli \
-        virtualenv \
-        && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    /tmp/build/install-esh.sh v0.3.1 && \
-    rm -rf /tmp/build && \
-    mkdir -p /usr/share/man/man1/ && \
-    touch /usr/share/man/man1/sh.distrib.1.gz
+        zip
 
-# change /bin/sh to use bash, because lots of our scripts use bash features
+# Upgrade pip and install additional Python packages
+RUN pip3 install --upgrade awscli virtualenv
+
+# Create symbolic link for python3
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Ensure the script is executable and run it
+RUN chmod +x /tmp/build/install-esh.sh && /tmp/build/install-esh.sh v0.3.1
+
+# Clean up
+RUN rm -rf /tmp/build && mkdir -p /usr/share/man/man1/ && touch /usr/share/man/man1/sh.distrib.1.gz
+
+# Change /bin/sh to use bash
 RUN echo "dash dash/sh boolean false" | debconf-set-selections && \
     DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 USER jenkins
 
+# Configure git
 RUN git config --global user.email "dev+jenkins@dwolla.com" && \
     git config --global user.name "Jenkins Build Agent" && \
     git config --global init.defaultBranch main
