@@ -11,11 +11,10 @@ WORKDIR ${JENKINS_HOME}
 
 USER root
 
-# Update package list
-RUN set -ex && apt-get update
-
-# Install necessary packages
-RUN apt-get install -y \
+# Update package list and install necessary packages
+RUN set -ex && \
+    apt-get update && \
+    apt-get install -y \
         apt-transport-https \
         bash \
         bc \
@@ -32,11 +31,11 @@ RUN apt-get install -y \
         shellcheck \
         zip
 
-# Upgrade pip and install additional Python packages
-RUN pip3 install --upgrade awscli virtualenv
-
-# Create symbolic link for python3
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Create a virtual environment and install Python packages there
+RUN python3 -m venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install awscli virtualenv
 
 # Ensure the script is executable and run it
 RUN chmod +x /tmp/build/install-esh.sh && /tmp/build/install-esh.sh v0.3.1
